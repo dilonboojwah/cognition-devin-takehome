@@ -1,4 +1,3 @@
-import { ActionButton } from "@/components/kit/ActionButton";
 import { ActionDialog } from "@/components/kit/ActionDialog";
 import { ActivityList } from "@/components/kit/ActivityList";
 import { DetailPanel } from "@/components/kit/DetailPanel";
@@ -31,9 +30,12 @@ export async function FlagDetail({ id }: { id: string }) {
       actions={
         mayUpdate ? (
           <>
-            <ActionButton
-              label={flag.enabled ? "Disable" : "Enable"}
+            <ActionDialog
+              trigger={flag.enabled ? "Disable" : "Enable"}
               variant={flag.enabled ? "destructive" : "default"}
+              title={`${flag.enabled ? "Disable" : "Enable"} ${flag.key}`}
+              description="This takes effect for everyone inside the rollout immediately."
+              confirmLabel={flag.enabled ? "Disable" : "Enable"}
               action={toggleFlagAction.bind(null, flag.id)}
             />
             <ActionDialog

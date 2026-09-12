@@ -48,7 +48,7 @@ export default async function AuditPage() {
       ),
       outcome: <StatusBadge status={event.outcome} />,
       change: (
-        <span className="block truncate text-[12px] text-muted-foreground">
+        <span className="block text-[12px] leading-relaxed break-words text-muted-foreground">
           {preview(event.oldValue)} → {preview(event.newValue)}
         </span>
       ),
@@ -70,7 +70,7 @@ export default async function AuditPage() {
             { key: "action", label: "Action" },
             { key: "resource", label: "Resource" },
             { key: "outcome", label: "Outcome" },
-            { key: "change", label: "Old → new", className: "max-w-xs" },
+            { key: "change", label: "Old → new", className: "max-w-md min-w-64" },
           ]}
           rows={rows}
           filterPlaceholder="Filter by action, actor or resource…"

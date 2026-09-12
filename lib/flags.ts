@@ -28,8 +28,9 @@ function snapshot(flag: { id: string; key: string; enabled: boolean; rolloutPerc
     key: flag.key,
     enabled: flag.enabled,
     rolloutPercent: flag.rolloutPercent,
-    // Rendered by ActivityList and the audit log as the state of the record.
-    status: flag.enabled ? "enabled" : "disabled",
+    // A flag has no status column, but ActivityList and the audit log render a
+    // record's `status`, so both halves of what can change are folded into one.
+    status: `${flag.enabled ? "enabled" : "disabled"} at ${flag.rolloutPercent}%`,
   };
 }
 

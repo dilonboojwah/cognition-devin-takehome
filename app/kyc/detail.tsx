@@ -51,7 +51,7 @@ export async function KycDetail({ id }: { id: string }) {
       compact
       title={kycCase.applicantName}
       description={
-        level === "high" && !escalated
+        level === "high" && !escalated && !settled
           ? `Scores ${KYC_RISK_HIGH_MIN} or above may only be escalated.`
           : undefined
       }

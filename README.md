@@ -114,8 +114,13 @@ and the primitives took both tools unchanged.
   `app/kyc/page.tsx`, because adding it to `lib/format.ts` would have edited a shared file.
 - **Statuses that are not really statuses.** `DataTable`'s status filter and `ActivityList`'s
   transition line both key off a `status` string, which a flag does not have; `lib/flags.ts`
-  synthesises `enabled` / `disabled` into its snapshot so both work. A tool whose records have no
-  lifecycle is off the Playbook's map.
+  synthesises `enabled at 35%` into its snapshot so a rollout change is legible as a transition.
+  A tool whose records have no lifecycle is off the Playbook's map.
+- **`ActionButton` hangs.** Its one-click path calls `router.refresh()` inside the same
+  transition as the action, and the button stayed on "Working…" after a successful flag toggle
+  even though the write had committed. The toggle now uses `ActionDialog`, which relies on
+  `revalidatePath` alone; `ActionButton` is unused by all three tools and was left untouched
+  rather than edited.
 - **Status colours are closed.** `StatusBadge` owns one tint map, so new statuses (`low`,
   `disabled`) silently fall back to grey. Left alone rather than edit a shared primitive.
 - **Named constants.** Step 3 says to add constants to `lib/config.ts` — which is itself a shared
