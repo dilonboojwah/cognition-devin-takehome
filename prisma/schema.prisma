@@ -1,0 +1,101 @@
+// Roles: ops_analyst | kyc_reviewer | finance_admin | eng_admin
+// Enums are unsupported on SQLite, so role and status columns are strings whose
+// allowed values live in lib/ (see lib/roles.ts, lib/refunds.ts).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String @id @default(cuid())
+  name  String
+  email String @unique
+  role  String
+
+  refundsRequested Refund[]         @relation("RefundRequestedBy")
+  refundApprovals  RefundApproval[]
+  kycDecisions     KycCase[]
+  flagUpdates      FeatureFlag[]
+  auditEvents      AuditEvent[]
+}
+
+model RoleAssignment {
+  email String @id
+  role  String
+}
+
+model Refund {
+  id            String   @id @default(cuid())
+  customer      String
+  amountCents   Int
+  reason        String
+  status        String
+  requestedById String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  requestedBy User             @relation("RefundRequestedBy", fields: [requestedById], references: [id])
+  approvals   RefundApproval[]
+}
+
+model RefundApproval {
+  id         String   @id @default(cuid())
+  refundId   String
+  approverId String
+  decision   String
+  note       String?
+  createdAt  DateTime @default(now())
+
+  refund   Refund @relation(fields: [refundId], references: [id])
+  approver User   @relation(fields: [approverId], references: [id])
+}
+
+model KycCase {
+  id            String    @id @default(cuid())
+  applicantName String
+  country       String
+  riskScore     Int
+  documents     String
+  status        String
+  submittedAt   DateTime  @default(now())
+  decidedById   String?
+  decidedAt     DateTime?
+  note          String?
+
+  decidedBy User? @relation(fields: [decidedById], references: [id])
+}
+
+model FeatureFlag {
+  id             String   @id @default(cuid())
+  key            String   @unique
+  description    String
+  enabled        Boolean  @default(false)
+  rolloutPercent Int      @default(0)
+  updatedById    String?
+  updatedAt      DateTime @updatedAt
+
+  updatedBy User? @relation(fields: [updatedById], references: [id])
+}
+
+model AuditEvent {
+  id           String   @id @default(cuid())
+  actorId      String
+  action       String
+  resourceType String
+  resourceId   String
+  oldValue     String?
+  newValue     String?
+  outcome      String
+  createdAt    DateTime @default(now())
+
+  actor User @relation(fields: [actorId], references: [id])
+
+  @@index([resourceType])
+  @@index([actorId])
+  @@index([createdAt])
+}
