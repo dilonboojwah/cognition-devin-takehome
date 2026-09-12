@@ -39,6 +39,21 @@ export async function updateFeatureFlag(
   id: string,
   changes: { enabled?: boolean; rolloutPercent?: number },
 ) {
+  return applyChange(actor, id, () => changes);
+}
+
+/**
+ * The next state is derived from the row as re-read inside the transaction, so
+ * a relative change like a toggle cannot be computed from a stale value.
+ */
+async function applyChange(
+  actor: Actor,
+  id: string,
+  resolve: (flag: { enabled: boolean; rolloutPercent: number }) => {
+    enabled?: boolean;
+    rolloutPercent?: number;
+  },
+) {
   await runMutation({
     actor,
     action: "flag.update",
@@ -50,6 +65,7 @@ export async function updateFeatureFlag(
       const flag = await tx.featureFlag.findUnique({ where: { id } });
       if (!flag) throw new FlagRuleError("Flag not found");
 
+      const changes = resolve(flag);
       const percent = changes.rolloutPercent;
       if (
         percent !== undefined &&
@@ -76,7 +92,5 @@ export async function updateFeatureFlag(
 }
 
 export async function toggleFeatureFlag(actor: Actor, id: string) {
-  const flag = await prisma.featureFlag.findUnique({ where: { id } });
-  if (!flag) throw new FlagRuleError("Flag not found");
-  return updateFeatureFlag(actor, id, { enabled: !flag.enabled });
+  return applyChange(actor, id, (flag) => ({ enabled: !flag.enabled }));
 }

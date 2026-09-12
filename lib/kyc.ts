@@ -124,6 +124,11 @@ export async function escalateKycCase(actor: Actor, id: string, note?: string) {
       if (kycCase.status === "escalated") {
         throw new KycRuleError("This case is already escalated");
       }
+      if (riskLevel(kycCase.riskScore) !== "high") {
+        throw new KycRuleError(
+          `Only a case scoring ${KYC_RISK_HIGH_MIN} or above may be escalated`,
+        );
+      }
 
       const updated = await tx.kycCase.update({
         where: { id },

@@ -33,7 +33,8 @@ export async function KycDetail({ id }: { id: string }) {
     !settled &&
     (escalated ? can(user.role, "kyc.decide_escalated") : can(user.role, "kyc.decide")) &&
     !(level === "high" && !escalated);
-  const mayEscalate = !settled && !escalated && can(user.role, "kyc.decide");
+  const mayEscalate =
+    !settled && !escalated && level === "high" && can(user.role, "kyc.decide");
   const roleLabel = ROLE_LABELS[user.role as Role] ?? user.role;
 
   const blockedBecause = settled

@@ -89,4 +89,14 @@ describe("kyc decision rules", () => {
     expect(decided.note).toBe("Source of funds verified");
     expect(decided.decidedById).toBe(financeAdmin.id);
   });
+
+  it("refuses to escalate a case below the high-risk threshold", async () => {
+    const reviewer = await makeUser("kyc_reviewer");
+    const kycCase = await makeKycCase({ riskScore: KYC_RISK_HIGH_MIN - 1 });
+
+    await expect(escalateKycCase(reviewer, kycCase.id)).rejects.toBeInstanceOf(KycRuleError);
+
+    expect(await statusOf(kycCase.id)).toBe("pending_review");
+    expect(await prisma.auditEvent.count()).toBe(0);
+  });
 });

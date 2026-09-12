@@ -63,4 +63,20 @@ describe("feature flag rules", () => {
     expect(unchanged.rolloutPercent).toBe(10);
     expect(await prisma.auditEvent.count()).toBe(0);
   });
+
+  it("toggles against the row as read inside the transaction", async () => {
+    const engAdmin = await makeUser("eng_admin");
+    const flag = await makeFeatureFlag({ enabled: false });
+
+    await toggleFeatureFlag(engAdmin, flag.id);
+    await toggleFeatureFlag(engAdmin, flag.id);
+
+    const settled = await prisma.featureFlag.findUniqueOrThrow({ where: { id: flag.id } });
+    expect(settled.enabled).toBe(false);
+    const events = await prisma.auditEvent.findMany({ orderBy: { createdAt: "asc" } });
+    expect(events.map((event) => event.newValue)).toEqual([
+      expect.stringContaining("enabled at"),
+      expect.stringContaining("disabled at"),
+    ]);
+  });
 });
