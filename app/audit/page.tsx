@@ -48,7 +48,8 @@ export default async function AuditPage() {
       ),
       outcome: <StatusBadge status={event.outcome} />,
       change: (
-        <span className="block text-[12px] leading-relaxed break-words text-muted-foreground">
+        // TableCell is nowrap by default: right for every other column, wrong here.
+        <span className="block max-w-md text-[12px] leading-relaxed break-words whitespace-normal text-muted-foreground">
           {preview(event.oldValue)} → {preview(event.newValue)}
         </span>
       ),
