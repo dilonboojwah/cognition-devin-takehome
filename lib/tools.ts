@@ -1,4 +1,4 @@
-import { Banknote, type LucideIcon } from "lucide-react";
+import { Banknote, ShieldCheck, ToggleRight, type LucideIcon } from "lucide-react";
 
 export type Tool = {
   slug: string;
@@ -15,5 +15,18 @@ export const TOOLS: Tool[] = [
     description:
       "Request, approve and reject customer refunds, with dual approval above $500.",
     icon: Banknote,
+  },
+  {
+    slug: "kyc",
+    title: "KYC review queue",
+    description:
+      "Review applicant identity cases, escalating high-risk ones to a finance admin.",
+    icon: ShieldCheck,
+  },
+  {
+    slug: "flags",
+    title: "Feature flags",
+    description: "Switch features on or off and set their rollout percentage.",
+    icon: ToggleRight,
   },
 ];

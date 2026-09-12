@@ -24,3 +24,32 @@ export async function makeRefund(
     },
   });
 }
+
+export async function makeKycCase(
+  overrides: Partial<{ riskScore: number; status: string; applicantName: string }> = {},
+) {
+  counter += 1;
+  return prisma.kycCase.create({
+    data: {
+      applicantName: overrides.applicantName ?? `Applicant ${counter}`,
+      country: "DE",
+      riskScore: overrides.riskScore ?? 10,
+      documents: JSON.stringify(["passport.pdf"]),
+      status: overrides.status ?? "pending_review",
+    },
+  });
+}
+
+export async function makeFeatureFlag(
+  overrides: Partial<{ enabled: boolean; rolloutPercent: number }> = {},
+) {
+  counter += 1;
+  return prisma.featureFlag.create({
+    data: {
+      key: `flag_${counter}`,
+      description: "Test flag",
+      enabled: overrides.enabled ?? false,
+      rolloutPercent: overrides.rolloutPercent ?? 0,
+    },
+  });
+}
