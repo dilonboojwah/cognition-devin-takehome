@@ -6,3 +6,7 @@ export const REFUND_DUAL_APPROVAL_THRESHOLD_CENTS = 50000;
 /** KYC risk bands, used for the risk level column and the escalation rule. */
 export const KYC_RISK_MEDIUM_MIN = 40;
 export const KYC_RISK_HIGH_MIN = 70;
+
+/** Inclusive bounds for a feature flag rollout percentage. */
+export const ROLLOUT_PERCENT_MIN = 0;
+export const ROLLOUT_PERCENT_MAX = 100;

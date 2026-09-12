@@ -127,7 +127,17 @@
   }
   html {
     @apply font-sans;
-    scrollbar-gutter: stable;
+    /* A permanent scrollbar means nothing ever shifts when content grows or
+       Radix scroll-locks a page for an open dropdown. */
+    overflow-y: scroll;
+  }
+
+  body[data-scroll-locked] {
+    /* Radix adds compensation padding when it scroll-locks the page for an
+       open dropdown. The permanent html scrollbar makes that unnecessary —
+       kill the padding so nothing shifts. */
+    padding-right: 0 !important;
+    margin-right: 0 !important;
   }
   h1,
   h2,
@@ -146,10 +156,6 @@
 }
 
 @layer components {
-  /* The 01 / 02 counters that label each band of the page. */
-  .section-index {
-    @apply font-mono text-[10px] tabular-nums text-muted-foreground;
-  }
   .eyebrow {
     @apply text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground;
   }

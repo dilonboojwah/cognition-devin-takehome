@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Check, Flag, Minus, ScanFace } from "lucide-react";
+import { ArrowUpRight, Check, Minus } from "lucide-react";
 import { AppShell } from "@/components/kit/AppShell";
 import { RoleBadge } from "@/components/kit/RoleBadge";
 import { PERMISSIONS, ROLES } from "@/lib/authorize";
@@ -7,24 +7,11 @@ import { TOOLS } from "@/lib/tools";
 
 export const dynamic = "force-dynamic";
 
-const INCOMING_TOOLS = [
-  {
-    title: "KYC review",
-    description: "Review queue with risk bands, escalation and decision history.",
-    icon: ScanFace,
-  },
-  {
-    title: "Feature flags",
-    description: "Toggle flags and set rollout percentages with audited changes.",
-    icon: Flag,
-  },
-];
-
 export default function HomePage() {
   return (
     <AppShell
       title="Internal Tools Starter Kit"
-      description="A foundation of primitives to scale custom apps quickly"
+      description="A replication of the existing 3 apps, all built on systematized primitives. This makes scaling custom apps quick"
     >
       <section className="border-t pt-5">
         <h2 className="text-sm font-medium">Tools</h2>
@@ -44,18 +31,6 @@ export default function HomePage() {
                 {tool.description}
               </p>
             </Link>
-          ))}
-          {INCOMING_TOOLS.map((tool) => (
-            <div key={tool.title} className="rounded-lg border border-dashed p-5">
-              <div className="flex items-center gap-2 text-[13px] font-medium text-muted-foreground">
-                <tool.icon className="size-3.5" />
-                {tool.title}
-                <span className="eyebrow ml-auto">Coming soon</span>
-              </div>
-              <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
-                {tool.description}
-              </p>
-            </div>
           ))}
         </div>
       </section>

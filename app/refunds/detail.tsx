@@ -59,7 +59,7 @@ export async function RefundDetail({ id }: { id: string }) {
           </>
         ) : (
           blockedBecause && (
-            <p className="max-w-56 text-right text-[13px] text-muted-foreground">
+            <p className="text-[13px] text-muted-foreground">
               {blockedBecause}
             </p>
           )

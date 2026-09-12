@@ -3,14 +3,14 @@
 import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -110,35 +110,50 @@ export function DataTable({
           value={text}
           onChange={(event) => setText(event.target.value)}
           placeholder={filterPlaceholder}
-          className="h-8 w-64 text-[13px]"
+          className="h-8 w-64 text-[13px] placeholder:text-muted-foreground/60"
           aria-label="Text filter"
         />
-        {allFacets.map((facet) => (
-          <Select
-            key={facet.key}
-            value={selected[facet.key] ?? ALL}
-            onValueChange={(value) =>
-              setSelected((current) => ({ ...current, [facet.key]: value }))
-            }
-          >
-            <SelectTrigger className="h-8 w-44 text-[13px]" aria-label={`${facet.label} filter`}>
-              <SelectValue placeholder={facet.label} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL} className="text-[13px]">
-                {facet.label}
-              </SelectItem>
-              {facet.options.map((option) => (
-                <SelectItem key={option.value} value={option.value} className="text-[13px]">
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        ))}
-        <span className="section-index ml-1">
-          {visible.length} / {rows.length}
-        </span>
+        {allFacets.map((facet) => {
+          const value = selected[facet.key] ?? ALL;
+          const label =
+            value === ALL
+              ? facet.label
+              : (facet.options.find((option) => option.value === value)?.label ?? facet.label);
+          return (
+            /* modal={false}: outside clicks pass through, so another filter
+               opens in one click and nothing scroll-locks the page. */
+            <DropdownMenu key={facet.key} modal={false}>
+              <DropdownMenuTrigger
+                aria-label={`${facet.label} filter`}
+                className="flex h-8 w-44 items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent px-2.5 text-[13px] whitespace-nowrap outline-none transition-colors select-none hover:bg-accent focus-visible:border-ring"
+              >
+                {label}
+                <ChevronDown className="size-4 text-muted-foreground" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-44">
+                <DropdownMenuItem
+                  className={cn("text-[13px]", value === ALL && "bg-accent")}
+                  onSelect={() =>
+                    setSelected((current) => ({ ...current, [facet.key]: ALL }))
+                  }
+                >
+                  {facet.label}
+                </DropdownMenuItem>
+                {facet.options.map((option) => (
+                  <DropdownMenuItem
+                    key={option.value}
+                    className={cn("text-[13px]", value === option.value && "bg-accent")}
+                    onSelect={() =>
+                      setSelected((current) => ({ ...current, [facet.key]: option.value }))
+                    }
+                  >
+                    {option.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        })}
       </div>
 
       <div className="overflow-x-auto">
@@ -183,7 +198,7 @@ export function DataTable({
                       <Link
                         href={row.href}
                         onClick={(event) => event.stopPropagation()}
-                        className="font-medium underline-offset-4 hover:text-primary hover:underline"
+                        className="font-medium"
                       >
                         {row.cells[column.key]}
                       </Link>

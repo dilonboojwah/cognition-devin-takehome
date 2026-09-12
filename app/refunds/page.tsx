@@ -46,7 +46,7 @@ export default async function RefundsPage({
       title="Refunds"
       description={
         <>
-          Refunds of $500.00 or more need two distinct{" "}
+          An active log of refunds customers are owed. Refunds of $500 or more need 2 distinct{" "}
           <RoleBadge role="finance_admin" className="mx-0.5 -translate-y-px" /> approvals.
         </>
       }
@@ -86,7 +86,7 @@ export default async function RefundsPage({
                 { key: "status", label: "Status" },
               ]}
               rows={rows}
-              filterPlaceholder="Filter by customer, reason or requester…"
+              filterPlaceholder="Search customer…"
               statusOptions={[...REFUND_STATUSES]}
               emptyMessage="No refunds match this filter."
             />
