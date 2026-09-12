@@ -45,7 +45,7 @@ export async function AppShell({ title, description, actions, children }: Props)
               <div className="mx-3 my-3 border-t" />
               <Link href="/audit" className={NAV_LINK}>
                 <ScrollText className="size-3.5" />
-                Audit trail
+                Audit Trail
               </Link>
             </>
           )}

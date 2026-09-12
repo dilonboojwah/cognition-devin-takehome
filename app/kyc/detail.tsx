@@ -14,7 +14,20 @@ import {
   parseDocuments,
   riskLevel,
 } from "@/lib/kyc";
+import { File, FileImage, FileSpreadsheet, FileText } from "lucide-react";
 import { approveKycAction, escalateKycAction, rejectKycAction } from "./actions";
+
+const DOCUMENT_ICONS = [
+  { ext: /\.pdf$/i, icon: FileText, className: "text-red-500" },
+  { ext: /\.(csv|xls|xlsx)$/i, icon: FileSpreadsheet, className: "text-emerald-600" },
+  { ext: /\.(jpe?g|png|gif|webp|heic)$/i, icon: FileImage, className: "text-sky-500" },
+] as const;
+
+function DocumentIcon({ name }: { name: string }) {
+  const match = DOCUMENT_ICONS.find((entry) => entry.ext.test(name));
+  const Icon = match?.icon ?? File;
+  return <Icon className={`size-4 ${match?.className ?? "text-muted-foreground"}`} />;
+}
 
 /** Detail card rendered beside the KYC table when a row is selected. */
 export async function KycDetail({ id }: { id: string }) {
@@ -93,7 +106,7 @@ export async function KycDetail({ id }: { id: string }) {
           </>
         ) : (
           blockedBecause && (
-            <p className="max-w-56 text-right text-[13px] text-muted-foreground">
+            <p className="text-[13px] text-muted-foreground">
               {blockedBecause}
             </p>
           )
@@ -137,7 +150,8 @@ export async function KycDetail({ id }: { id: string }) {
         <h3 className="eyebrow">Documents</h3>
         <ul className="mt-4 divide-y border-y">
           {parseDocuments(kycCase.documents).map((document) => (
-            <li key={document} className="py-2.5 text-[13px]">
+            <li key={document} className="flex items-center gap-2.5 py-2.5 text-[13px]">
+              <DocumentIcon name={document} />
               {document}
             </li>
           ))}

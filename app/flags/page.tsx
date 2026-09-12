@@ -32,11 +32,11 @@ export default async function FlagsPage({
 
   return (
     <AppShell
-      title="Feature flags"
+      title="Feature Flags"
       description={
         <>
-          Only an <RoleBadge role="eng_admin" className="mx-0.5 -translate-y-px" /> can switch a
-          flag or change its rollout, and every change records its old and new values.
+          An <RoleBadge role="eng_admin" className="mx-0.5 -translate-y-px" /> dashboard to
+          monitor/toggle rollout % for new features.
         </>
       }
     >
@@ -52,13 +52,13 @@ export default async function FlagsPage({
           <div className="min-w-0">
             <DataTable
               columns={[
-                { key: "key", label: "Key" },
-                { key: "description", label: "Description" },
-                { key: "rollout", label: "Rollout", className: "tabular-nums" },
-                { key: "status", label: "State" },
+                { key: "key", label: "Feature", className: "min-w-40" },
+                { key: "description", label: "Description", className: "min-w-56" },
+                { key: "rollout", label: "Rollout", className: "tabular-nums min-w-20" },
+                { key: "status", label: "State", className: "min-w-24" },
               ]}
               rows={rows}
-              filterPlaceholder="Filter by key or description…"
+              filterPlaceholder="Search feature…"
               statusOptions={["enabled", "disabled"]}
               statusLabel="All states"
               emptyMessage="No flags match this filter."

@@ -5,10 +5,10 @@ import { RoleBadge } from "@/components/kit/RoleBadge";
 import { StatusBadge } from "@/components/kit/StatusBadge";
 import { requireCurrentUser } from "@/lib/auth";
 import { can, ROLE_LABELS, type Role } from "@/lib/authorize";
-import { ROLLOUT_PERCENT_MAX, ROLLOUT_PERCENT_MIN } from "@/lib/config";
 import { formatDateTime } from "@/lib/format";
 import { FLAG_RESOURCE_TYPE, getFeatureFlag } from "@/lib/flags";
 import { setRolloutAction, toggleFlagAction } from "./actions";
+import { RolloutEditor, RolloutValue, SetRolloutButton } from "./rollout-input";
 
 /** Detail card rendered beside the flags table when a row is selected. */
 export async function FlagDetail({ id }: { id: string }) {
@@ -23,51 +23,47 @@ export async function FlagDetail({ id }: { id: string }) {
   const mayUpdate = can(user.role, "flag.update");
 
   return (
-    <DetailPanel
-      compact
-      title={flag.key}
-      description={flag.description}
-      actions={
-        mayUpdate ? (
-          <>
-            <ActionDialog
-              trigger={flag.enabled ? "Disable" : "Enable"}
-              variant={flag.enabled ? "destructive" : "default"}
-              title={`${flag.enabled ? "Disable" : "Enable"} ${flag.key}`}
-              description="This takes effect for everyone inside the rollout immediately."
-              confirmLabel={flag.enabled ? "Disable" : "Enable"}
-              action={toggleFlagAction.bind(null, flag.id)}
-            />
-            <ActionDialog
-              trigger="Set rollout"
-              variant="secondary"
-              title="Set rollout percent"
-              description={`Between ${ROLLOUT_PERCENT_MIN} and ${ROLLOUT_PERCENT_MAX}.`}
-              confirmLabel="Save"
-              action={setRolloutAction.bind(null, flag.id)}
-              fields={[
-                {
-                  name: "rolloutPercent",
-                  label: "Rollout percent",
-                  type: "number",
-                  required: true,
-                  placeholder: String(flag.rolloutPercent),
-                },
-              ]}
-            />
-          </>
-        ) : (
-          <p className="max-w-56 text-right text-[13px] text-muted-foreground">
-            {ROLE_LABELS[user.role as Role] ?? user.role} cannot change feature flags.
-          </p>
-        )
-      }
+    <RolloutEditor
+      flagId={flag.id}
+      current={flag.rolloutPercent}
+      action={setRolloutAction}
+    >
+      <DetailPanel
+        compact
+        title={flag.key}
+        description={flag.description}
+        actions={
+          mayUpdate ? (
+            <>
+              <ActionDialog
+                trigger={flag.enabled ? "Disable" : "Enable"}
+                variant={flag.enabled ? "destructive" : "default"}
+                title={`${flag.enabled ? "Disable" : "Enable"} ${flag.key}`}
+                description="This takes effect for everyone inside the rollout immediately."
+                confirmLabel={flag.enabled ? "Disable" : "Enable"}
+                action={toggleFlagAction.bind(null, flag.id)}
+              />
+              <SetRolloutButton />
+            </>
+          ) : (
+            <p className="text-[13px] text-muted-foreground">
+              {ROLE_LABELS[user.role as Role] ?? user.role} cannot change feature flags.
+            </p>
+          )
+        }
       fields={[
         {
           label: "State",
           value: <StatusBadge status={flag.enabled ? "enabled" : "disabled"} />,
         },
-        { label: "Rollout", value: `${flag.rolloutPercent}%` },
+        {
+          label: "Rollout",
+          value: mayUpdate ? (
+            <RolloutValue current={flag.rolloutPercent} />
+          ) : (
+            `${flag.rolloutPercent}%`
+          ),
+        },
         {
           label: "Last changed by",
           value: flag.updatedBy ? (
@@ -86,6 +82,7 @@ export async function FlagDetail({ id }: { id: string }) {
         <h3 className="eyebrow">Activity</h3>
         <ActivityList resourceType={FLAG_RESOURCE_TYPE} resourceId={flag.id} />
       </div>
-    </DetailPanel>
+      </DetailPanel>
+    </RolloutEditor>
   );
 }

@@ -50,13 +50,13 @@ export default async function KycPage({
 
   return (
     <AppShell
-      title="KYC review queue"
+      title="KYC Review Queue"
       description={
         <>
-          Oldest submission first. Cases scoring {KYC_RISK_HIGH_MIN} or above may only be
-          escalated by a <RoleBadge role="kyc_reviewer" className="mx-0.5 -translate-y-px" />,
-          then decided by a{" "}
-          <RoleBadge role="finance_admin" className="mx-0.5 -translate-y-px" /> with a note.
+          An active log of customer signups needing to be verified. Cases scoring{" "}
+          {KYC_RISK_HIGH_MIN} or above are escalated to a{" "}
+          <RoleBadge role="kyc_reviewer" className="mx-0.5 -translate-y-px" />, then decided by
+          a <RoleBadge role="finance_admin" className="mx-0.5 -translate-y-px" />.
         </>
       }
     >
@@ -72,14 +72,14 @@ export default async function KycPage({
           <div className="min-w-0">
             <DataTable
               columns={[
-                { key: "applicant", label: "Applicant" },
-                { key: "country", label: "Country" },
-                { key: "risk", label: "Risk" },
-                { key: "age", label: "Age", className: "tabular-nums" },
-                { key: "status", label: "Status" },
+                { key: "applicant", label: "Applicant", className: "min-w-44" },
+                { key: "country", label: "Country", className: "min-w-24" },
+                { key: "risk", label: "Risk", className: "min-w-32" },
+                { key: "age", label: "Age", className: "tabular-nums min-w-20" },
+                { key: "status", label: "Status", className: "min-w-32" },
               ]}
               rows={rows}
-              filterPlaceholder="Filter by applicant or country…"
+              filterPlaceholder="Search applicant…"
               statusOptions={[...KYC_STATUSES]}
               facets={[
                 {
