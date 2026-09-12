@@ -8,17 +8,9 @@ import { formatDateTime } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
-function preview(json: string | null): string {
-  if (!json) return "—";
-  const value = JSON.parse(json) as Record<string, unknown>;
-  return Object.entries(value)
-    .filter(([key]) => key !== "id")
-    .map(([key, entry]) => `${key}: ${String(entry)}`)
-    .join(", ");
-}
-
-/** Cross-tool audit trail. Not in the nav registry; reached from the header
- *  link. Needs no per-tool work: new resource types appear as events exist. */
+/** Cross-tool audit trail. Not in the tool registry; the sidebar links to it
+ *  below a divider. Needs no per-tool work: new resource types appear as
+ *  events exist. */
 export default async function AuditPage() {
   const user = await requireCurrentUser();
   const events = await listAuditEvents(user);
@@ -33,12 +25,8 @@ export default async function AuditPage() {
     searchText: `${event.action} ${event.resourceType} ${event.actor.name} ${event.resourceId}`,
     cells: {
       when: <span className="tabular-nums">{formatDateTime(event.createdAt)}</span>,
-      actor: (
-        <span className="flex items-center gap-2 whitespace-nowrap">
-          {event.actor.name}
-          <RoleBadge role={event.actor.role} />
-        </span>
-      ),
+      actor: <span className="whitespace-nowrap">{event.actor.name}</span>,
+      role: <RoleBadge role={event.actor.role} />,
       action: <code className="text-[12px]">{event.action}</code>,
       resource: (
         <span className="flex gap-1 whitespace-nowrap text-muted-foreground">
@@ -47,20 +35,13 @@ export default async function AuditPage() {
         </span>
       ),
       outcome: <StatusBadge status={event.outcome} />,
-      change: (
-        // TableCell is nowrap by default: right for every other column, wrong here.
-        <span className="block max-w-md text-[12px] leading-relaxed break-words whitespace-normal text-muted-foreground">
-          {preview(event.oldValue)} → {preview(event.newValue)}
-        </span>
-      ),
     },
   }));
 
   return (
     <AppShell
       title="Audit trail"
-      description="Every mutation across every tool, newest first. Written inside the same
-        transaction as the change it describes, and never updated or deleted."
+      description="A permanent record of every change made through this app"
     >
       <section className="space-y-4 border-t pt-5">
         <h2 className="eyebrow">Events</h2>
@@ -68,10 +49,10 @@ export default async function AuditPage() {
           columns={[
             { key: "when", label: "When (UTC)" },
             { key: "actor", label: "Actor" },
+            { key: "role", label: "Role" },
             { key: "action", label: "Action" },
             { key: "resource", label: "Resource" },
             { key: "outcome", label: "Outcome" },
-            { key: "change", label: "Old → new", className: "max-w-md min-w-64" },
           ]}
           rows={rows}
           filterPlaceholder="Filter by action, actor or resource…"

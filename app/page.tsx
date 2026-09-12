@@ -11,7 +11,7 @@ export default function HomePage() {
   return (
     <AppShell
       title="Internal Tools Starter Kit"
-      description="A foundation of primitives to scale custom apps quickly"
+      description="A replication of the existing 3 apps, all built on systematized primitives. This makes scaling custom apps quick"
     >
       <section className="border-t pt-5">
         <h2 className="text-sm font-medium">Tools</h2>

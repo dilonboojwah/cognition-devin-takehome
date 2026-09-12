@@ -46,7 +46,7 @@ export default async function RefundsPage({
       title="Refunds"
       description={
         <>
-          Refunds of $500.00 or more need two distinct{" "}
+          Refunds greater than $500 need 2 distinct{" "}
           <RoleBadge role="finance_admin" className="mx-0.5 -translate-y-px" /> approvals.
         </>
       }
