@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "db:setup": "prisma migrate deploy && prisma generate && tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset --force",
-    "test": "vitest run"
+    "test": "vitest run",
+    "vercel-build": "node scripts/use-postgres.mjs && prisma generate && prisma db push --accept-data-loss && tsx prisma/seed.ts && next build"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",

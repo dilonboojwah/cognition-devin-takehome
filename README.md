@@ -10,7 +10,13 @@ Session one built the foundation plus the **Refunds** tool. Session two added **
 **Feature flags** by following [`devin/playbook-add-internal-tool.md`](devin/playbook-add-internal-tool.md),
 with no new migrations and no change to the shared primitives.
 
-## Run it
+## Try it
+
+**Hosted demo:** _add the Vercel URL here after the first deploy._ Nothing to install. Use the
+role selector in the header to switch between the five seeded people; every screen and every
+button changes with the role.
+
+**Run it locally:**
 
 ```bash
 npm install
@@ -21,6 +27,47 @@ npm test           # Vitest, against a throwaway prisma/test.db
 
 No environment variables are needed. `.env` is committed and contains only the SQLite path;
 the database file itself is gitignored.
+
+### A five-minute tour
+
+1. Land on **Refunds** as the ops analyst. Open *Adventure Works* ($500). There is no approve
+   button: an ops analyst cannot decide refunds, and the card says why.
+2. Switch to **Mr Bean** (finance admin) and open the same refund. He already gave the first of
+   two approvals, so he still cannot decide it. Switch to **Giyu Tomioka**, the other finance
+   admin, and approve. The status moves to approved and the Activity section at the bottom of
+   the card records both approvals.
+3. Open **KYC Review Queue** as **Dwight Schrute** (KYC reviewer). A low-risk case can be
+   approved outright. A case scoring 70 or above offers only *Escalate*.
+4. Switch to a finance admin to decide an escalated case. Leaving the note blank is refused.
+5. Open **Feature Flags** as **Rain Man** (engineering admin) and change a rollout. Try 101 and
+   it is rejected. Every other role sees the same table read-only.
+6. Open **Audit Trail**. Every action above is there with the old and new value, including the
+   attempts that were denied.
+
+## Deploying it
+
+The schema is authored for SQLite so a clean clone runs with no setup. A hosted deployment needs
+a real database, so `npm run vercel-build` swaps the datasource provider to PostgreSQL, pushes
+the schema, seeds it, and then builds. Every model uses types both providers share, so nothing
+else changes. On Postgres the in-transaction re-reads in `runMutation()` do real work, which they
+cannot on a single-writer SQLite file.
+
+To deploy:
+
+1. Import the repository at [vercel.com/new](https://vercel.com/new).
+2. In the project, open **Storage**, add a **Neon** Postgres database, and connect it. That sets
+   `DATABASE_URL` automatically.
+3. In **Settings → Environment Variables**, add `DEMO_MODE=1`.
+4. Redeploy.
+
+`DEMO_MODE=1` adds a **Reset demo data** button to the header. The hosted demo is a shared
+database, so whatever one visitor approves the next visitor sees already approved; the button
+restores the seeded dataset without a redeploy. It is the one write path that deliberately sits
+outside `runMutation()`, because it is an operator action on the demo rather than a business
+action. Leave it unset for anything real.
+
+Note that a deploy reseeds the database, so preview deployments pointed at the same
+`DATABASE_URL` will reset the demo.
 
 ## How it hangs together
 

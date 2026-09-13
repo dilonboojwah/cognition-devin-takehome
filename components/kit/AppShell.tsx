@@ -3,7 +3,10 @@ import type { ReactNode } from "react";
 import { Home, ScrollText } from "lucide-react";
 import { getCurrentUser, isSsoEnabled, listSwitchableUsers } from "@/lib/auth";
 import { can } from "@/lib/authorize";
+import { isDemoMode } from "@/lib/demo";
+import { resetDemoDataAction } from "@/lib/demo-actions";
 import { TOOLS } from "@/lib/tools";
+import { ActionDialog } from "@/components/kit/ActionDialog";
 import { RoleBadge } from "@/components/kit/RoleBadge";
 import { UserSwitcher } from "@/components/kit/UserSwitcher";
 
@@ -25,7 +28,7 @@ export async function AppShell({ title, description, actions, children }: Props)
 
   return (
     <div className="flex min-h-screen">
-      <aside className="hidden w-56 shrink-0 border-r px-4 py-6 md:block">
+      <aside className="sticky top-0 hidden h-screen w-56 shrink-0 overflow-y-auto border-r px-4 py-6 md:block">
         <Link href="/" className="block px-3 text-lg font-medium tracking-tight">
           Fintech startup
         </Link>
@@ -64,11 +67,23 @@ export async function AppShell({ title, description, actions, children }: Props)
               <span className="text-muted-foreground">Not signed in</span>
             )}
           </div>
-          {isSsoEnabled() ? (
-            <span className="eyebrow">Entra ID SSO</span>
-          ) : (
-            user && <UserSwitcher users={switchable} currentId={user.id} />
-          )}
+          <div className="flex items-center gap-4">
+            {isDemoMode() && (
+              <ActionDialog
+                trigger="Reset demo data"
+                variant="outline"
+                title="Reset the demo data"
+                description="Restores the seeded refunds, KYC cases and flags, and clears the audit trail. Use this if an earlier visitor already decided everything."
+                confirmLabel="Reset"
+                action={resetDemoDataAction}
+              />
+            )}
+            {isSsoEnabled() ? (
+              <span className="eyebrow">Entra ID SSO</span>
+            ) : (
+              user && <UserSwitcher users={switchable} currentId={user.id} />
+            )}
+          </div>
         </header>
 
         <main className="flex-1 px-8 py-10">

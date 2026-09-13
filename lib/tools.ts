@@ -12,15 +12,13 @@ export const TOOLS: Tool[] = [
   {
     slug: "refunds",
     title: "Refunds",
-    description:
-      "An active log of refunds customers are owed. Refunds of $500 or more need 2 distinct finance admin approvals.",
+    description: "An active log of refunds customers are owed.",
     icon: Banknote,
   },
   {
     slug: "kyc",
     title: "KYC Review Queue",
-    description:
-      "An active log of customer signups needing to be verified. Cases scoring 70 or above are escalated to a KYC reviewer, then decided by a finance admin.",
+    description: "An active log of customer signups needing to be verified.",
     icon: ShieldCheck,
   },
   {
