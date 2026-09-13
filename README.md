@@ -18,23 +18,22 @@ Each layer only talks to the one below it.
 
 | Layer | Where | What it does |
 |---|---|---|
-| Pages | `app/<tool>/`, `components/kit/` | Frontend. |
-| Server actions | `app/<tool>/actions.ts` | Gets user, calls business function, returns error. |
-| Domain rules | `lib/<tool>.ts` | Product logic: who can approve a refund, when a KYC case must escalate. |
-| Write path | `lib/mutation.ts`, `lib/authorize.ts`, `lib/audit.ts` | `runMutation()` resolves the user, checks permission, opens a transaction, applies the change, writes one audit event in the same commit. If audit fails, the change rolls back. |
+| Pages | `app/<tool>/`, `components/kit/` | Frontend |
+| Server actions | `app/<tool>/actions.ts` | Get user, call business function, return error |
+| Domain business rules | `lib/<tool>.ts` | Product logic: who can approve a refund, when a KYC case must escalate. |
+| Foundation write path | `lib/mutation.ts`, `lib/authorize.ts`, `lib/audit.ts` | shared by all tools (who is the user, what are their permissions, how changes get written, writing audit records) |
 
 ## Prototype Walkthrough
 
 ![Home page: tool cards and the live permission matrix](docs/home.png)
 
-- **Home** One card per tool + the permission matrix
-  - **Role Selector** The header selector swaps between five seeded people.
-- **Refunds** An active log of refunds customers are owed. $500+ needs two
-  distinct admin approvals (a requester can't decide their own)
-  card tell you which rule excluded you.
-- **KYC Review Queue** An active log of customer signups needing to be verified (oldest first). Cases scoring 70 or above are escalated to a KYC reviewer, then decided by a Finance admin.
-- **Feature Flags** An Eng admin dashboard to monitor/toggle rollout % for new features.
-- **Audit** A permanent record of every change made through this app
+- **Home**: one card per tool + the permission matrix
+  - **Role Selector**: selector in the top right that swaps between five seeded people
+- **Refunds**: an active log of refunds customers are owed. $500+ needs two
+  distinct admin approvals (a requester can't decide their own).
+- **KYC Review Queue**: an active log of customer signups needing to be verified (oldest first). Cases scoring 70 or above are escalated to a KYC reviewer, then decided by a Finance admin.
+- **Feature Flags**: an Eng admin dashboard to monitor/toggle rollout % for new features.
+- **Audit**: a permanent record of every change made through this app
 
 ## Build Process
 
