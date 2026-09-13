@@ -23,22 +23,18 @@ Each layer only talks to the one below it.
 | Domain rules | `lib/<tool>.ts` | Product logic: who can approve a refund, when a KYC case must escalate. |
 | Write path | `lib/mutation.ts`, `lib/authorize.ts`, `lib/audit.ts` | `runMutation()` resolves the user, checks permission, opens a transaction, applies the change, writes one audit event in the same commit. If audit fails, the change rolls back. |
 
-## How to Use This Prototype
+## Prototype Walkthrough
 
-- **Home (`/`).** One card per tool, plus the permission matrix rendered live from the same
-  `PERMISSIONS` list the server enforces — "who can do what" is a screenshot, not a wiki page.
-- **Refunds (`/refunds`).** Ops analysts request, finance admins decide. $500+ needs two
-  distinct admin approvals; a requester can't decide their own. Missing buttons on a detail
+![Home page: tool cards and the live permission matrix](docs/home.png)
+
+- **Home** One card per tool + the permission matrix
+  - **Role Selector** The header selector swaps between five seeded people.
+- **Refunds** An active log of refunds customers are owed. $500+ needs two
+  distinct admin approvals (a requester can't decide their own)
   card tell you which rule excluded you.
-- **KYC (`/kyc`).** Oldest-first queue; risk is derived from the score. Reviewers decide
-  low-risk cases; 70+ can only be escalated to a finance admin, who must attach a note.
-- **Flags (`/flags`).** The deliberately awkward tool — no status field, just `enabled` and
-  a rollout percent, which is where the shared components' assumptions get stressed.
-- **Audit (`/audit`).** Every attempted change, including denied ones — actor, role, action,
-  old → new, outcome. The same reader powers each card's Activity section.
-- **Roles.** The header selector swaps between five seeded people. Fastest tour: open the
-  $500 refund as ops analyst (no approve button), approve as one finance admin, finish as the
-  other — then find it all in Audit Trail.
+- **KYC Review Queue** An active log of customer signups needing to be verified (oldest first). Cases scoring 70 or above are escalated to a KYC reviewer, then decided by a Finance admin.
+- **Feature Flags** An Eng admin dashboard to monitor/toggle rollout % for new features.
+- **Audit** A permanent record of every change made through this app
 
 ## Build Process
 
