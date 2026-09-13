@@ -12,7 +12,7 @@ with no new migrations and no change to the shared primitives.
 
 ## Try it
 
-**Hosted demo:** https://cognition-devin-takehome.vercel.app — nothing to install. Use the
+**Hosted demo:** https://cognition-devin-takehome-prototype.vercel.app — nothing to install. Use the
 role selector in the header to switch between the five seeded people; every screen and every
 button changes with the role.
 
