@@ -53,10 +53,11 @@ export default async function KycPage({
       title="KYC Review Queue"
       description={
         <>
-          An active log of customer signups needing to be verified. Cases scoring{" "}
-          {KYC_RISK_HIGH_MIN} or above are escalated to a{" "}
-          <RoleBadge role="kyc_reviewer" className="mx-0.5 -translate-y-px" />, then decided by
-          a <RoleBadge role="finance_admin" className="mx-0.5 -translate-y-px" />.
+          An active log of customer signups needing to be verified. All cases need to be
+          reviewed by a{" "}
+          <RoleBadge role="kyc_reviewer" className="mx-0.5 -translate-y-px" />; any case with{" "}
+          {KYC_RISK_HIGH_MIN} or higher risk needs to be approved by a{" "}
+          <RoleBadge role="finance_admin" className="mx-0.5 -translate-y-px" />.
         </>
       }
     >

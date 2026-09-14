@@ -1,3 +1,4 @@
+import { ActionButton } from "@/components/kit/ActionButton";
 import { ActionDialog } from "@/components/kit/ActionDialog";
 import { ActivityList } from "@/components/kit/ActivityList";
 import { DetailPanel } from "@/components/kit/DetailPanel";
@@ -74,13 +75,20 @@ export async function KycDetail({ id }: { id: string }) {
           <>
             {mayDecide && (
               <>
-                <ActionDialog
-                  trigger="Approve"
-                  title="Approve this case"
-                  confirmLabel="Approve"
-                  action={approveKycAction.bind(null, kycCase.id)}
-                  {...decisionFields}
-                />
+                {level === "high" ? (
+                  <ActionDialog
+                    trigger="Approve"
+                    title="Approve this case"
+                    confirmLabel="Approve"
+                    action={approveKycAction.bind(null, kycCase.id)}
+                    {...decisionFields}
+                  />
+                ) : (
+                  <ActionButton
+                    label="Approve"
+                    action={approveKycAction.bind(null, kycCase.id)}
+                  />
+                )}
                 <ActionDialog
                   trigger="Reject"
                   variant="destructive"

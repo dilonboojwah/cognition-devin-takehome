@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 type Props = {
@@ -14,8 +13,7 @@ type Props = {
 
 /** Mutate on click, no confirmation. For actions safe enough to run unconfirmed. */
 export function ActionButton({ label, variant, disabled, action }: Props) {
-  const router = useRouter();
-  const [pending, startTransition] = useTransition();
+  const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   return (
@@ -24,17 +22,17 @@ export function ActionButton({ label, variant, disabled, action }: Props) {
         variant={variant}
         size="sm"
         disabled={disabled || pending}
-        onClick={() =>
-          startTransition(async () => {
-            setError(null);
+        onClick={async () => {
+          setError(null);
+          setPending(true);
+          try {
+            // Server actions revalidatePath themselves, so no router.refresh() here.
             const message = await action({});
-            if (message) {
-              setError(message);
-              return;
-            }
-            router.refresh();
-          })
-        }
+            if (message) setError(message);
+          } finally {
+            setPending(false);
+          }
+        }}
       >
         {pending ? "Working…" : label}
       </Button>
